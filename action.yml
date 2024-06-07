@@ -1,0 +1,13 @@
+name: Conventional Pull Request Action
+description: An action to lint pull request titles to the conventional commit spec with jira tickets in the scope
+author: Ben Hodgson
+
+inputs:
+  commitlintRulesPath:
+    description: 'Relative path to commitlint rules file'
+    required: false
+    default: './commitlint.rules.js'
+
+runs:
+  using: node16
+  main: dist/index.js
