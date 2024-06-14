@@ -1,6 +1,6 @@
 module.exports = {
-    rules: {
-        "some-overriden-rule": [1, "never", "some-override-value"],
-        "only-rules-module-rule": [2, "always", "this rule is only defined here"],
-    },
+  rules: {
+    'subject-case': [2, 'always', ['sentence-case']],
+    'body-max-line-length': [1, 'always', 20]
+  }
 };

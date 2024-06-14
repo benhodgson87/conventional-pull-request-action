@@ -1,6 +1,5 @@
 import github from '@actions/github';
 import commitlint from '@commitlint/lint';
-import changelogParser from 'conventional-changelog-conventionalcommits';
 import conventionalCommitsParser from 'conventional-commits-parser';
 import { getActionConfig } from './utils/config';
 import { logPrTitleFound } from './outputs/logs';
@@ -56,13 +55,7 @@ const lint = async () => {
   if (commitlintRules === MISSING_CHECKOUT) return warnMissingCheckout();
   if (commitlintRules === RULES_NOT_FOUND) return warnRulesNotFound();
 
-  const {
-    conventionalChangelog: { parserOpts }
-  } = await changelogParser(null, null);
-
-  const lintOutput = await commitlint(pullRequest.title, commitlintRules, {
-    parserOpts
-  });
+  const lintOutput = await commitlint(pullRequest.title, commitlintRules);
   lintOutput.warnings.forEach(warn => warnPrTitle(warn.message));
   lintOutput.errors.forEach(err => errorPrTitle(err.message));
 
@@ -73,8 +66,6 @@ const lint = async () => {
   const pullRequestScope = conventionalCommitsParser.sync(
     pullRequest.title
   ).scope;
-
-  console.log({ pullRequestScope });
 
   if (
     pullRequestScope &&

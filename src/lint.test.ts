@@ -5,22 +5,18 @@ import { lint } from './lint';
 
 vi.mock('@actions/core', async importOriginal => {
   const mod = await importOriginal<typeof import('@actions/core')>();
+
   const error = vi.fn();
-  const info = vi.fn((title) => { return `Found PR title: "${title}"`});
-  const warning = vi.fn((warning) => console.log(`${warning}\n\n`))
+  const info = vi.fn(title => {
+    return `Found PR title: "${title}"`;
+  });
+  const warning = vi.fn(warning => console.log(`${warning}\n\n`));
+  const setFailed = vi.fn();
+
   return {
     ...mod,
-    default: { error, info, warning },
-    getInput: vi.fn(),
-    getBooleanInput: vi.fn(name => {
-      switch (name) {
-        case 'dry-run':
-          return false;
-      }
-    }),
-    setFailed: vi.fn(),
-    debug: vi.fn(),
-    notice: vi.fn(),
+    default: { error, info, warning, setFailed },
+    setFailed,
     info,
     warning
   };
@@ -34,7 +30,7 @@ vi.mock('@actions/github', async importOriginal => {
         get: vi.fn().mockReturnValue({
           data: {
             commits: 1,
-            title: 'feat(FOO-123): some commit message'
+            title: 'feat(BAR-1234): some commit message'
           }
         })
       }
@@ -53,11 +49,11 @@ vi.mock('@actions/github', async importOriginal => {
         }
       }
     }
-  }
+  };
 
   return {
     ...mod,
-    default: { getOctokit , context },
+    default: { getOctokit, context },
     getOctokit,
     context
   };
@@ -77,13 +73,16 @@ describe('Linter', () => {
   });
 
   it('should fail if `` is missing ', async () => {
-    process.env.INPUT_SCOPEPREFIXES = "['FOO-']";
-    process.env.INPUT_COMMITLINTRULESPATH = './src/fixtures/commitlint.rules.js';
+    process.env.INPUT_SCOPEPREFIXES = `["FOO-"]`;
+    process.env.INPUT_COMMITLINTRULESPATH =
+      './src/fixtures/commitlint.rules.js';
     process.env.GITHUB_TOKEN = 'TOKEN';
     process.env.GITHUB_WORKSPACE = './';
 
     await lint();
 
-    expect(setFailed).toHaveBeenCalledWith('afadsgasdga');
+    expect(setFailed).toHaveBeenCalledWith(
+      '⛔️ Pull request title does not conform to the conventional commit spec'
+    );
   });
 });

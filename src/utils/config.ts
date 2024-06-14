@@ -5,7 +5,9 @@ export const getActionConfig = () => {
       const scopePrefixes = JSON.parse(process.env.INPUT_SCOPEPREFIXES.trim());
       SCOPE_PREFIXES =
         scopePrefixes.length > 0 ? scopePrefixes : SCOPE_PREFIXES;
-    } catch (_) {}
+    } catch (e) {
+      console.error('Failed to extract scope prefixes', e)
+    }
   }
 
   return {
