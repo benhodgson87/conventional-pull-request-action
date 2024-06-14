@@ -1,17 +1,24 @@
 import { warning } from '@actions/core';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   warnMissingCheckout,
   warnPrTitle,
   warnRulesNotFound
 } from './warnings';
 
-jest.mock('@actions/core', () => ({
-  warning: jest.fn()
-}));
+vi.mock('@actions/core', async importOriginal => {
+  const mod = await importOriginal<typeof import('@actions/core')>();
+  const warning = vi.fn();
+  return {
+    ...mod,
+    default: { warning },
+    warning
+  };
+});
 
 describe('Warning outputs', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it('`warnMissingCheckout` should pass the expected error to the output', () => {

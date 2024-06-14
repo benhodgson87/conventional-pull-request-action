@@ -77,9 +77,10 @@ const lint = async () => {
   console.log({ pullRequestScope });
 
   if (
+    pullRequestScope &&
     SCOPE_PREFIXES &&
     SCOPE_PREFIXES.length > 0 &&
-    !SCOPE_PREFIXES.some((scope: string) => pullRequest.title.includes(scope))
+    !SCOPE_PREFIXES.some((scope: string) => pullRequestScope.includes(scope))
   ) {
     return setFailedScopeNotValid(SCOPE_PREFIXES);
   }

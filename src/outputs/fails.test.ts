@@ -1,4 +1,5 @@
 import { setFailed } from '@actions/core';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   setFailedPrNotFound,
   setFailedMissingToken,
@@ -6,13 +7,19 @@ import {
   setFailedScopeNotValid
 } from './fails';
 
-jest.mock('@actions/core', () => ({
-  setFailed: jest.fn()
-}));
+vi.mock('@actions/core', async importOriginal => {
+  const mod = await importOriginal<typeof import('@actions/core')>();
+  const setFailed = vi.fn();
+  return {
+    ...mod,
+    default: { setFailed },
+    setFailed
+  };
+});
 
 describe('Failure outputs', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it('`setFailedPrNotFound` should pass the expected error to the output ', () => {

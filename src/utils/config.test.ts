@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { getActionConfig } from './config';
 
 describe('Config utils', () => {

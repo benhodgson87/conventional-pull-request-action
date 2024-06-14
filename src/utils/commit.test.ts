@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { getCommitSubject } from './commit';
 
 describe('Commit utils', () => {

@@ -1,38 +1,51 @@
 import { setFailed } from '@actions/core';
 import * as github from '@actions/github';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { lint } from './lint';
 
-jest.mock('@actions/core', () => ({
-  getInput: jest.fn(),
-  getBooleanInput: jest.fn().mockImplementation(name => {
-    switch (name) {
-      case 'dry-run':
-        return false;
-    }
-  }),
-  setFailed: jest.fn(),
-  debug: jest.fn(),
-  notice: jest.fn()
-}));
+vi.mock('@actions/core', async importOriginal => {
+  const mod = await importOriginal<typeof import('@actions/core')>();
+  const error = vi.fn();
+  return {
+    ...mod,
+    default: { error },
+    getInput: vi.fn(),
+    getBooleanInput: vi.fn().mockImplementation(name => {
+      switch (name) {
+        case 'dry-run':
+          return false;
+      }
+    }),
+    setFailed: vi.fn(),
+    debug: vi.fn(),
+    notice: vi.fn()
+  };
+});
 
-jest.mock('@actions/github', () => ({
-  __esModule: true,
-  getOctokit: jest.fn().mockReturnValue({
+vi.mock('@actions/github', async importOriginal => {
+  const mod = await importOriginal<typeof import('@actions/github')>();
+  const getOctokit = vi.fn().mockReturnValue({
     pulls: {
-      get: jest.fn().mockReturnValue({
+      get: vi.fn().mockReturnValue({
         data: {
           commits: 1,
           title: 'feat(FOO-123): some commit message'
         }
       })
     }
-  })
-}));
+  });
+
+  return {
+    ...mod,
+    default: { getOctokit },
+    getOctokit
+  };
+});
 
 describe('Linter', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.restoreAllMocks();
+    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   afterEach(() => {
@@ -47,11 +60,6 @@ describe('Linter', () => {
     process.env.INPUT_COMMITLINTRULESPATH = './rules.json';
     process.env.GITHUB_TOKEN = 'TOKEN';
     process.env.GITHUB_WORKSPACE = './';
-
-    github.context.payload.pull_request = {
-      title: 'feat: Disallow ending of friendship',
-      number: 1234
-    };
 
     await lint();
 
