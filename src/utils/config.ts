@@ -6,7 +6,7 @@ export const getActionConfig = () => {
       SCOPE_PREFIXES =
         scopePrefixes.length > 0 ? scopePrefixes : SCOPE_PREFIXES;
     } catch (e) {
-      console.error('Failed to extract scope prefixes', e)
+      console.error('Failed to extract scope prefixes', e);
     }
   }
 

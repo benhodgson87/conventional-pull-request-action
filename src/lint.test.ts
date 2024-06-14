@@ -53,10 +53,8 @@ describe('Linter', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.restoreAllMocks();
-  });
 
-  afterEach(() => {
-    process.env.INPUT_SCOPEPREFIXES = `[]`;
+    delete process.env.INPUT_SCOPEPREFIXES;
     process.env.INPUT_COMMITLINTRULESPATH =
       './src/fixtures/commitlint.rules.js';
     process.env.GITHUB_TOKEN = 'TOKEN';
