@@ -78,7 +78,7 @@ describe('Linter', () => {
 
   it('should fail if `` is missing ', async () => {
     process.env.INPUT_SCOPEPREFIXES = "['FOO-']";
-    process.env.INPUT_COMMITLINTRULESPATH = './rules.json';
+    process.env.INPUT_COMMITLINTRULESPATH = './src/fixtures/commitlint.rules.js';
     process.env.GITHUB_TOKEN = 'TOKEN';
     process.env.GITHUB_WORKSPACE = './';
 
