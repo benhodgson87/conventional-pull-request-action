@@ -1,4 +1,4 @@
-import core from '@actions/core';
+import core from '@actions/core'
 
 export const errorPrTitle = (message: string) =>
-  core.error(`⛔️ PR title: ${message}`);
+  core.error(`⛔️ PR title: ${message}`)

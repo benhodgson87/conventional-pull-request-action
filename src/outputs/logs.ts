@@ -1,4 +1,4 @@
-import core from '@actions/core';
+import core from '@actions/core'
 
 export const logPrTitleFound = (title: string) =>
-  core.info(`Found PR title: "${title}"`);
+  core.info(`Found PR title: "${title}"`)
