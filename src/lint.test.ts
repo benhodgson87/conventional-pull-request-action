@@ -1,18 +1,15 @@
 import { setFailed } from '@actions/core';
-import * as github from '@actions/github';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { lint } from './lint';
 
 vi.mock('@actions/core', async importOriginal => {
   const mod = await importOriginal<typeof import('@actions/core')>();
-
   const error = vi.fn();
   const info = vi.fn(title => {
     return `Found PR title: "${title}"`;
   });
-  const warning = vi.fn(warning => console.log(`${warning}\n\n`));
-  const setFailed = vi.fn();
-
+  const warning = vi.fn((warning) => console.warn(`${warning}`));
+  const setFailed = vi.fn((failure) => console.error(`${failure}`));
   return {
     ...mod,
     default: { error, info, warning, setFailed },
@@ -72,7 +69,7 @@ describe('Linter', () => {
     process.env.GITHUB_WORKSPACE = undefined;
   });
 
-  it('should fail if `` is missing ', async () => {
+  it('should fail if `INPUT_SCOPEPREFIXES` is missing ', async () => {
     process.env.INPUT_SCOPEPREFIXES = `["FOO-"]`;
     process.env.INPUT_COMMITLINTRULESPATH =
       './src/fixtures/commitlint.rules.js';
