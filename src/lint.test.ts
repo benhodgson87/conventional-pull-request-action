@@ -6,11 +6,13 @@ import { lint } from './lint';
 vi.mock('@actions/core', async importOriginal => {
   const mod = await importOriginal<typeof import('@actions/core')>();
   const error = vi.fn();
+  const info = vi.fn((title) => { return `Found PR title: "${title}"`});
+  const warning = vi.fn((warning) => console.log(`${warning}\n\n`))
   return {
     ...mod,
-    default: { error },
+    default: { error, info, warning },
     getInput: vi.fn(),
-    getBooleanInput: vi.fn().mockImplementation(name => {
+    getBooleanInput: vi.fn(name => {
       switch (name) {
         case 'dry-run':
           return false;
@@ -18,27 +20,46 @@ vi.mock('@actions/core', async importOriginal => {
     }),
     setFailed: vi.fn(),
     debug: vi.fn(),
-    notice: vi.fn()
+    notice: vi.fn(),
+    info,
+    warning
   };
 });
 
 vi.mock('@actions/github', async importOriginal => {
   const mod = await importOriginal<typeof import('@actions/github')>();
-  const getOctokit = vi.fn().mockReturnValue({
-    pulls: {
-      get: vi.fn().mockReturnValue({
-        data: {
-          commits: 1,
-          title: 'feat(FOO-123): some commit message'
-        }
-      })
+  const getOctokit = vi.fn(() => ({
+    rest: {
+      pulls: {
+        get: vi.fn().mockReturnValue({
+          data: {
+            commits: 1,
+            title: 'feat(FOO-123): some commit message'
+          }
+        })
+      }
     }
-  });
+  }));
+
+  const context = {
+    eventName: 'pull_request',
+    payload: {
+      pull_request: {
+        number: 1234,
+        title: '',
+        base: {
+          user: { login: 'bob_cratchett' },
+          repo: { name: 'http://github.com/bob_cratchett/stuff' }
+        }
+      }
+    }
+  }
 
   return {
     ...mod,
-    default: { getOctokit },
-    getOctokit
+    default: { getOctokit , context },
+    getOctokit,
+    context
   };
 });
 
