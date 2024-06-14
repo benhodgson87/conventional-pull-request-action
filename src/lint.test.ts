@@ -27,7 +27,7 @@ vi.mock('@actions/github', async importOriginal => {
         get: vi.fn().mockReturnValue({
           data: {
             commits: 1,
-            title: 'feat(BAR-1234): some commit message'
+            title: 'feat(BAR-1234): Some commit message'
           }
         })
       }
@@ -70,7 +70,7 @@ describe('Linter', () => {
   });
 
   it('should fail if `INPUT_SCOPEPREFIXES` is missing ', async () => {
-    process.env.INPUT_SCOPEPREFIXES = `["FOO-"]`;
+    process.env.INPUT_SCOPEPREFIXES = `["FOO-","BANANAS-"]`;
     process.env.INPUT_COMMITLINTRULESPATH =
       './src/fixtures/commitlint.rules.js';
     process.env.GITHUB_TOKEN = 'TOKEN';
@@ -79,7 +79,19 @@ describe('Linter', () => {
     await lint();
 
     expect(setFailed).toHaveBeenCalledWith(
-      '⛔️ Pull request title does not conform to the conventional commit spec'
+      '⛔️ PR title must contain a scope with a ticket number containing one of FOO-, BANANAS-'
     );
+  });
+
+  it('should pass if `INPUT_SCOPEPREFIXES` is present ', async () => {
+    process.env.INPUT_SCOPEPREFIXES = `["BAR-"]`;
+    process.env.INPUT_COMMITLINTRULESPATH =
+      './src/fixtures/commitlint.rules.js';
+    process.env.GITHUB_TOKEN = 'TOKEN';
+    process.env.GITHUB_WORKSPACE = './';
+
+    await lint();
+
+    expect(setFailed).not.toHaveBeenCalled();
   });
 });

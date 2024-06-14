@@ -20,6 +20,6 @@ export const setFailedDoesNotMatchSpec = () =>
 export const setFailedScopeNotValid = (scopes: Array<string>) =>
   setFailed(
     `PR title must contain a scope with a ticket number containing one of ${scopes.join(
-      ' / '
+      ', '
     )}`
   );
