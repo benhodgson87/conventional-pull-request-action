@@ -102,7 +102,7 @@ describe('Linter', () => {
       '⛔️ PR title: subject must be lower-case'
     );
     expect(setFailed).toHaveBeenCalledWith(
-      '⛔️ Pull request title does not conform to the conventional commit spec'
+      '🛑 Pull request title does not conform to the conventional commit spec'
     );
   });
 
@@ -149,7 +149,7 @@ describe('Linter', () => {
     await lint();
 
     expect(setFailed).toHaveBeenCalledWith(
-      '⛔️ PR title must contain a scope with a ticket number containing one of FOO-'
+      '🛑 PR title must contain a scope with a ticket number containing one of FOO-'
     );
   });
 });

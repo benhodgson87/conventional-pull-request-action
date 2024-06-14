@@ -1,6 +1,6 @@
 import core from '@actions/core';
 
-const setFailed = (message: string) => core.setFailed(`⛔️ ${message}`);
+const setFailed = (message: string) => core.setFailed(`🛑 ${message}`);
 
 export const setFailedPrNotFound = () =>
   setFailed(

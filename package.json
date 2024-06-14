@@ -17,7 +17,6 @@
     "@commitlint/config-conventional": "^19.2.2",
     "@commitlint/lint": "^19.2.2",
     "@types/conventional-commits-parser": "^5.0.0",
-    "conventional-changelog-conventionalcommits": "^8.0.0",
     "conventional-commits-parser": "^5.0.0"
   },
   "devDependencies": {
