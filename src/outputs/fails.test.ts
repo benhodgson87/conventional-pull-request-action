@@ -4,7 +4,8 @@ import {
   setFailedPrNotFound,
   setFailedMissingToken,
   setFailedDoesNotMatchSpec,
-  setFailedScopeNotValid
+  setFailedScopeNotValid,
+  setFailedScopeRequired
 } from './fails';
 
 vi.mock('@actions/core', async importOriginal => {
@@ -40,6 +41,18 @@ describe('Failure outputs', () => {
     setFailedDoesNotMatchSpec();
     expect(setFailed).toHaveBeenCalledWith(
       `🛑 Pull request title does not conform to the conventional commit spec`
+    );
+  });
+
+  it('`setFailedScopeRequired` should pass the expected error to the output with no arguments', () => {
+    setFailedScopeRequired();
+    expect(setFailed).toHaveBeenCalledWith(`🛑 PR title must contain a scope`);
+  });
+
+  it('`setFailedScopeRequired` should pass the expected error to the output with given arguments', () => {
+    setFailedScopeRequired('feat');
+    expect(setFailed).toHaveBeenCalledWith(
+      `🛑 PR title of type 'feat' must contain a scope`
     );
   });
 

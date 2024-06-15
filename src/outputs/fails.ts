@@ -1,4 +1,5 @@
 import * as core from '@actions/core';
+import conventionalCommitsParser from 'conventional-commits-parser';
 
 const setFailed = (message: string) => core.setFailed(`🛑 ${message}`);
 
@@ -15,6 +16,13 @@ export const setFailedMissingToken = () =>
 export const setFailedDoesNotMatchSpec = () =>
   setFailed(
     `Pull request title does not conform to the conventional commit spec`
+  );
+
+export const setFailedScopeRequired = (
+  type?: conventionalCommitsParser.Commit.Field | string
+) =>
+  setFailed(
+    `PR title${type ? ` of type '${type.toString()}'` : ''} must contain a scope`
   );
 
 export const setFailedScopeNotValid = (regex: string) =>

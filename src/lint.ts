@@ -3,12 +3,17 @@ import commitlint from '@commitlint/lint';
 import conventionalCommitsParser from 'conventional-commits-parser';
 import createPreset from 'conventional-changelog-conventionalcommits';
 import { getActionConfig } from './utils/config';
-import { logActionSuccessful, logPrTitleFound } from './outputs/logs';
+import {
+  logActionSuccessful,
+  logPrTitleFound,
+  logScopeCheckSkipped
+} from './outputs/logs';
 import {
   setFailedDoesNotMatchSpec,
   setFailedMissingToken,
   setFailedPrNotFound,
-  setFailedScopeNotValid
+  setFailedScopeNotValid,
+  setFailedScopeRequired
 } from './outputs/fails';
 import { getLintRules, MISSING_CHECKOUT, RULES_NOT_FOUND } from './utils/rules';
 import {
@@ -18,15 +23,18 @@ import {
 } from './outputs/warnings';
 import { errorPrTitle } from './outputs/errors';
 
-const lint = async () => {
-  const actionConfig = getActionConfig();
-  const { GITHUB_TOKEN, SCOPE_REGEX } = actionConfig;
-
-  if (!GITHUB_TOKEN) {
+const lint = async (
+  githubToken?: string,
+  githubWorkspace?: string,
+  rulesPath?: string,
+  enforcedScopeTypes?: Array<string>,
+  scopeRegex?: RegExp
+) => {
+  if (!githubToken) {
     return setFailedMissingToken();
   }
 
-  const octokit = github.getOctokit(GITHUB_TOKEN);
+  const octokit = github.getOctokit(githubToken);
 
   if (!github.context.payload.pull_request) {
     return setFailedPrNotFound();
@@ -48,10 +56,7 @@ const lint = async () => {
 
   logPrTitleFound(pullRequest.title);
 
-  const commitlintRules = await getLintRules(
-    actionConfig.RULES_PATH,
-    actionConfig.GITHUB_WORKSPACE
-  );
+  const commitlintRules = await getLintRules(rulesPath, githubWorkspace);
 
   if (commitlintRules === MISSING_CHECKOUT) return warnMissingCheckout();
   if (commitlintRules === RULES_NOT_FOUND) return warnRulesNotFound();
@@ -72,10 +77,21 @@ const lint = async () => {
     return setFailedDoesNotMatchSpec();
   }
 
-  const { scope } = conventionalCommitsParser.sync(pullRequest.title);
+  const { scope, type } = conventionalCommitsParser.sync(pullRequest.title);
 
-  if (scope && SCOPE_REGEX && !scope.match(SCOPE_REGEX)) {
-    return setFailedScopeNotValid(SCOPE_REGEX.toString());
+  if (
+    !enforcedScopeTypes ||
+    (enforcedScopeTypes && type && enforcedScopeTypes.includes(type))
+  ) {
+    if (enforcedScopeTypes && !scope) {
+      return setFailedScopeRequired(type);
+    }
+
+    if (scope && scopeRegex && !scope.match(scopeRegex)) {
+      return setFailedScopeNotValid(scopeRegex.toString());
+    }
+  } else {
+    if (type) logScopeCheckSkipped(type);
   }
 
   return logActionSuccessful(hasWarnings);
