@@ -21,4 +21,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           commitlintRulesPath: './commitlint.rules.js'
-          scopePrefixes: '["FOO-"]'
