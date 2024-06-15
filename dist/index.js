@@ -288,7 +288,7 @@ exports.getActionConfig = void 0;
 const getActionConfig = () => {
     if (process.env.INPUT_SCOPEREGEX) {
         try {
-            const scopeRegex = new RegExp(process.env.INPUT_SCOPEREGEX, 'i');
+            const scopeRegex = new RegExp(process.env.INPUT_SCOPEREGEX, 'g');
             return {
                 SCOPE_REGEX: scopeRegex,
                 RULES_PATH: process.env.INPUT_COMMITLINTRULESPATH,
