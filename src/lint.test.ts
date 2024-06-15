@@ -1,5 +1,5 @@
 import { setFailed, warning, error, info } from '@actions/core';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lint } from './lint';
 
 const mocks = vi.hoisted(() => {
