@@ -110,6 +110,28 @@ describe('Linter', () => {
     }
   );
 
+  it('should fail and output an error if title does not have a type', async () => {
+    mocks.getOctokit.mockReturnValue({
+      rest: {
+        pulls: {
+          get: vi.fn().mockReturnValue({
+            data: {
+              commits: 1,
+              title: 'this is not a conventional commit'
+            }
+          })
+        }
+      }
+    });
+
+    await lint.apply(null, mockArgs);
+
+    expect(error).toHaveBeenCalledWith('⛔️ PR title: type may not be empty');
+    expect(setFailed).toHaveBeenCalledWith(
+      '🛑 Pull request title does not conform to the conventional commit spec'
+    );
+  });
+
   it('should fail and output an error if title does not pass a custom error rule', async () => {
     mocks.getOctokit.mockReturnValue({
       rest: {
