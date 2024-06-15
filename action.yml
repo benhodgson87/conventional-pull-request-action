@@ -13,5 +13,5 @@ inputs:
     required: false
     default: './commitlint.rules.js'
   scopeRegex:
-    description: A JS Regular Expression that the scope value must conform to; eg. '\\b(FOO|BAR|BAZ)\\b-[0-9]+' to require a Jira ticket with a specific project ID. Do not include leading or trailing slashes, or flags.
+    description: A JS Regular Expression that the scope value must conform to; eg. '\\b(FOO|BAR|BAZ)\\b-[0-9]+' to require a Jira ticket with a specific project ID. DO NOT include leading or trailing slashes, or flags. These are added when the regex arg is converted to a RegExp.
     required: false
