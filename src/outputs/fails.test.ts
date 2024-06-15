@@ -44,9 +44,9 @@ describe('Failure outputs', () => {
   });
 
   it('`setFailedDoesNotMatchSpec` should pass the expected error to the output with given arguments', () => {
-    setFailedScopeNotValid(['SCARY-', 'SPORTY-', 'BABY-', 'GINGER-', 'POSH-']);
+    setFailedScopeNotValid('/needle/g');
     expect(setFailed).toHaveBeenCalledWith(
-      `🛑 PR title must contain a scope with a ticket number containing one of SCARY-, SPORTY-, BABY-, GINGER-, POSH-`
+      `🛑 PR title must contain a scope which matches the regular expression: /needle/g`
     );
   });
 });

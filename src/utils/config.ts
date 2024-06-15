@@ -1,17 +1,20 @@
 export const getActionConfig = () => {
-  let SCOPE_PREFIXES: Array<string> = [];
-  if (process.env.INPUT_SCOPEPREFIXES) {
+  if (process.env.INPUT_SCOPEREGEX) {
     try {
-      const scopePrefixes = JSON.parse(process.env.INPUT_SCOPEPREFIXES.trim());
-      SCOPE_PREFIXES =
-        scopePrefixes.length > 0 ? scopePrefixes : SCOPE_PREFIXES;
+      const scopeRegex = new RegExp(process.env.INPUT_SCOPEREGEX, 'i');
+
+      return {
+        SCOPE_REGEX: scopeRegex,
+        RULES_PATH: process.env.INPUT_COMMITLINTRULESPATH,
+        GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+        GITHUB_WORKSPACE: process.env.GITHUB_WORKSPACE
+      };
     } catch (e) {
-      console.error('Failed to extract scope prefixes', e);
+      console.error('Failed to convert scopeRegex to valid RegExp', e);
     }
   }
 
   return {
-    SCOPE_PREFIXES,
     RULES_PATH: process.env.INPUT_COMMITLINTRULESPATH,
     GITHUB_TOKEN: process.env.GITHUB_TOKEN,
     GITHUB_WORKSPACE: process.env.GITHUB_WORKSPACE

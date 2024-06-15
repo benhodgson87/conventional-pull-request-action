@@ -20,7 +20,7 @@ import { errorPrTitle } from './outputs/errors';
 
 const lint = async () => {
   const actionConfig = getActionConfig();
-  const { GITHUB_TOKEN, SCOPE_PREFIXES } = actionConfig;
+  const { GITHUB_TOKEN, SCOPE_REGEX } = actionConfig;
 
   if (!GITHUB_TOKEN) {
     return setFailedMissingToken();
@@ -72,17 +72,10 @@ const lint = async () => {
     return setFailedDoesNotMatchSpec();
   }
 
-  const pullRequestScope = conventionalCommitsParser.sync(
-    pullRequest.title
-  ).scope;
+  const { scope } = conventionalCommitsParser.sync(pullRequest.title);
 
-  if (
-    pullRequestScope &&
-    SCOPE_PREFIXES &&
-    SCOPE_PREFIXES.length > 0 &&
-    !SCOPE_PREFIXES.some((scope: string) => pullRequestScope.includes(scope))
-  ) {
-    return setFailedScopeNotValid(SCOPE_PREFIXES);
+  if (scope && SCOPE_REGEX && !scope.match(SCOPE_REGEX)) {
+    return setFailedScopeNotValid(SCOPE_REGEX.toString());
   }
 
   return logActionSuccessful(hasWarnings);

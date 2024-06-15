@@ -160,8 +160,8 @@ describe('Linter', () => {
     expect(setFailed).not.toHaveBeenCalled();
   });
 
-  it('should fail if the title is a valid conventional commit but a required scope is expected', async () => {
-    process.env.INPUT_SCOPEPREFIXES = `["FOO-"]`;
+  it('should fail if the title is a valid conventional commit but a correct scope pattern is missing', async () => {
+    process.env.INPUT_SCOPEREGEX = `[A-Z]+-[0-9]+`;
 
     mocks.getOctokit.mockReturnValue({
       rest: {
@@ -170,7 +170,7 @@ describe('Linter', () => {
             data: {
               commits: 1,
               title:
-                'feat(BAR-1234): subject should not be longer than 20 characters long'
+                'feat(docs): subject should not be longer than 20 characters long'
             }
           })
         }
@@ -180,7 +180,29 @@ describe('Linter', () => {
     await lint();
 
     expect(setFailed).toHaveBeenCalledWith(
-      '🛑 PR title must contain a scope with a ticket number containing one of FOO-'
+      '🛑 PR title must contain a scope which matches the regular expression: /[A-Z]+-[0-9]+/i'
     );
+  });
+
+  it('should pass if the title is a valid conventional commit and a correct scope pattern is present', async () => {
+    process.env.INPUT_SCOPEREGEX = `[A-Z]+-[0-9]+`;
+
+    mocks.getOctokit.mockReturnValue({
+      rest: {
+        pulls: {
+          get: vi.fn().mockReturnValue({
+            data: {
+              commits: 1,
+              title:
+                'feat(FOO-123): subject should not be longer than 20 characters long'
+            }
+          })
+        }
+      }
+    });
+
+    await lint();
+
+    expect(setFailed).not.toHaveBeenCalled();
   });
 });

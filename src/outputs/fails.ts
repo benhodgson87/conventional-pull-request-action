@@ -17,9 +17,7 @@ export const setFailedDoesNotMatchSpec = () =>
     `Pull request title does not conform to the conventional commit spec`
   );
 
-export const setFailedScopeNotValid = (scopes: Array<string>) =>
+export const setFailedScopeNotValid = (regex: string) =>
   setFailed(
-    `PR title must contain a scope with a ticket number containing one of ${scopes.join(
-      ', '
-    )}`
+    `PR title must contain a scope which matches the regular expression: ${regex}`
   );

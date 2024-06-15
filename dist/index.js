@@ -55,7 +55,7 @@ const warnings_1 = __nccwpck_require__(5367);
 const errors_1 = __nccwpck_require__(772);
 const lint = () => __awaiter(void 0, void 0, void 0, function* () {
     const actionConfig = (0, config_1.getActionConfig)();
-    const { GITHUB_TOKEN, SCOPE_PREFIXES } = actionConfig;
+    const { GITHUB_TOKEN, SCOPE_REGEX } = actionConfig;
     if (!GITHUB_TOKEN) {
         return (0, fails_1.setFailedMissingToken)();
     }
@@ -85,12 +85,9 @@ const lint = () => __awaiter(void 0, void 0, void 0, function* () {
     if (!lintOutput.valid) {
         return (0, fails_1.setFailedDoesNotMatchSpec)();
     }
-    const pullRequestScope = conventional_commits_parser_1.default.sync(pullRequest.title).scope;
-    if (pullRequestScope &&
-        SCOPE_PREFIXES &&
-        SCOPE_PREFIXES.length > 0 &&
-        !SCOPE_PREFIXES.some((scope) => pullRequestScope.includes(scope))) {
-        return (0, fails_1.setFailedScopeNotValid)(SCOPE_PREFIXES);
+    const { scope } = conventional_commits_parser_1.default.sync(pullRequest.title);
+    if (scope && SCOPE_REGEX && !scope.match(SCOPE_REGEX)) {
+        return (0, fails_1.setFailedScopeNotValid)(SCOPE_REGEX.toString());
     }
     return (0, logs_1.logActionSuccessful)(hasWarnings);
 });
@@ -195,7 +192,7 @@ const setFailedMissingToken = () => setFailed(`Could not find Github Token. Ensu
 exports.setFailedMissingToken = setFailedMissingToken;
 const setFailedDoesNotMatchSpec = () => setFailed(`Pull request title does not conform to the conventional commit spec`);
 exports.setFailedDoesNotMatchSpec = setFailedDoesNotMatchSpec;
-const setFailedScopeNotValid = (scopes) => setFailed(`PR title must contain a scope with a ticket number containing one of ${scopes.join(', ')}`);
+const setFailedScopeNotValid = (regex) => setFailed(`PR title must contain a scope which matches the regular expression: ${regex}`);
 exports.setFailedScopeNotValid = setFailedScopeNotValid;
 
 
@@ -289,19 +286,21 @@ exports.warnPrTitle = warnPrTitle;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getActionConfig = void 0;
 const getActionConfig = () => {
-    let SCOPE_PREFIXES = [];
-    if (process.env.INPUT_SCOPEPREFIXES) {
+    if (process.env.INPUT_SCOPEREGEX) {
         try {
-            const scopePrefixes = JSON.parse(process.env.INPUT_SCOPEPREFIXES.trim());
-            SCOPE_PREFIXES =
-                scopePrefixes.length > 0 ? scopePrefixes : SCOPE_PREFIXES;
+            const scopeRegex = new RegExp(process.env.INPUT_SCOPEREGEX, 'i');
+            return {
+                SCOPE_REGEX: scopeRegex,
+                RULES_PATH: process.env.INPUT_COMMITLINTRULESPATH,
+                GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+                GITHUB_WORKSPACE: process.env.GITHUB_WORKSPACE
+            };
         }
         catch (e) {
-            console.error('Failed to extract scope prefixes', e);
+            console.error('Failed to convert scopeRegex to valid RegExp', e);
         }
     }
     return {
-        SCOPE_PREFIXES,
         RULES_PATH: process.env.INPUT_COMMITLINTRULESPATH,
         GITHUB_TOKEN: process.env.GITHUB_TOKEN,
         GITHUB_WORKSPACE: process.env.GITHUB_WORKSPACE
