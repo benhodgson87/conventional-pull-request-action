@@ -12,6 +12,9 @@ jobs:
   pr-lint:
     runs-on: ubuntu-latest
     steps:
+      - name: Check Out
+        uses: actions/checkout@v4
+
       - name: Lint PR Title
         uses: benhodgson87/conventional-pull-request-action@v2.0.4
         env:
