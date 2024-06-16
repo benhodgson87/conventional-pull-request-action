@@ -18,5 +18,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           commitlintRulesPath: './commitlint.rules.js'
-          enforcedScopeTypes: 'feat|fix'
+          enforcedScopeTypes: 'feat|fix|chore'
           scopeRegex: '\b(FOO|BAR|BAZ)\b-[0-9]+'
