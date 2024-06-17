@@ -74,7 +74,7 @@ describe('Linter', () => {
     await lint.apply(null, mockArgs);
 
     expect(info).toHaveBeenCalledWith(
-      '🕵️  Found PR title: "feat(BAR-1234): hello i am a valid title"'
+      '🕵️ Found PR title: "feat(BAR-1234): hello i am a valid title"'
     );
   });
 
@@ -174,7 +174,7 @@ describe('Linter', () => {
     await lint.apply(null, mockArgs);
 
     expect(warning).toHaveBeenCalledWith(
-      '⚠️  PR title: subject must not be longer than 20 characters'
+      '⚠️ PR title: subject must not be longer than 20 characters'
     );
     expect(info).toHaveBeenLastCalledWith(
       '✅ PR title validated with warnings'
@@ -229,6 +229,9 @@ describe('Linter', () => {
       new RegExp(`\\b(FOO|BAR|BAZ)\\b-[0-9]+`, 'g')
     ]);
 
+    expect(info).toHaveBeenCalledWith(
+      `👀 Found scope "FOO-123". Linting with "/\\b(FOO|BAR|BAZ)\\b-[0-9]+/g\"`
+    );
     expect(setFailed).not.toHaveBeenCalled();
   });
 
@@ -253,6 +256,9 @@ describe('Linter', () => {
       new RegExp(`\\b(FOO|BAR|BAZ)\\b-[0-9]+`, 'g')
     ]);
 
+    expect(info).toHaveBeenCalledWith(
+      `👀 Found scope "FOO-123". Linting with "/\\b(FOO|BAR|BAZ)\\b-[0-9]+/g\"`
+    );
     expect(info).toHaveBeenLastCalledWith(
       '✅ PR title validated with warnings'
     );
@@ -280,7 +286,7 @@ describe('Linter', () => {
     ]);
 
     expect(info).toHaveBeenCalledWith(
-      `⏩ Skipping scope check for type 'chore'`
+      `⏩ Skipping scope check for type "chore"`
     );
     expect(info).toHaveBeenLastCalledWith('✅ PR title validated successfully');
     expect(setFailed).not.toHaveBeenCalled();

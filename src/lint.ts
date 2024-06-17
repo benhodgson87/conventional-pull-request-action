@@ -4,6 +4,7 @@ import conventionalCommitsParser from 'conventional-commits-parser';
 import createPreset from 'conventional-changelog-conventionalcommits';
 import {
   logActionSuccessful,
+  logLintableScopeFound,
   logPrTitleFound,
   logScopeCheckSkipped
 } from './outputs/logs';
@@ -95,8 +96,12 @@ const lint = async (
       return setFailedScopeRequired(type);
     }
 
-    if (scope && scopeRegex && !scope.match(scopeRegex)) {
-      return setFailedScopeNotValid(scopeRegex.toString());
+    if (scope && scopeRegex) {
+      logLintableScopeFound(scope, scopeRegex.toString());
+
+      if (!scope.match(scopeRegex)) {
+        return setFailedScopeNotValid(scopeRegex.toString());
+      }
     }
   } else {
     if (type) logScopeCheckSkipped(type);

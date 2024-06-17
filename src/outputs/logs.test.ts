@@ -2,6 +2,7 @@ import { info } from '@actions/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   logActionSuccessful,
+  logLintableScopeFound,
   logPrTitleFound,
   logScopeCheckSkipped
 } from './logs';
@@ -24,7 +25,14 @@ describe('Log outputs', () => {
   it('`logPrTitleFound` should pass the expected log to the output', () => {
     logPrTitleFound(`fix(CDV-2812): Get with friends`);
     expect(info).toHaveBeenCalledWith(
-      `🕵️  Found PR title: "fix(CDV-2812): Get with friends"`
+      `🕵️ Found PR title: "fix(CDV-2812): Get with friends"`
+    );
+  });
+
+  it('`logLintableScopeFound` ', () => {
+    logLintableScopeFound('CDV-2812', '$[A-Z]+-[0-9]+^');
+    expect(info).toHaveBeenCalledWith(
+      `👀 Found scope "CDV-2812". Linting with "$[A-Z]+-[0-9]+^"`
     );
   });
 
@@ -41,7 +49,7 @@ describe('Log outputs', () => {
   it('`logScopeCheckSkipped` should pass the expected log to the output', () => {
     logScopeCheckSkipped('chore');
     expect(info).toHaveBeenCalledWith(
-      `⏩ Skipping scope check for type 'chore'`
+      `⏩ Skipping scope check for type "chore"`
     );
   });
 });
