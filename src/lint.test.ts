@@ -156,7 +156,7 @@ describe('Linter', () => {
 
     await lint.apply(null, mockArgs);
 
-    expect(error).toHaveBeenCalledWith('⛔️ PR title: type may not be empty');
+    expect(error).toHaveBeenCalledWith('⛔️ Commitlint: type may not be empty');
     expect(setFailed).toHaveBeenCalledWith(
       '🛑 Pull request title does not conform to the conventional commit spec'
     );
@@ -179,7 +179,7 @@ describe('Linter', () => {
     await lint.apply(null, mockArgs);
 
     expect(error).toHaveBeenCalledWith(
-      '⛔️ PR title: subject must not be upper-case'
+      '⛔️ Commitlint: subject must not be upper-case'
     );
     expect(setFailed).toHaveBeenCalledWith(
       '🛑 Pull request title does not conform to the conventional commit spec'
@@ -204,7 +204,7 @@ describe('Linter', () => {
     await lint.apply(null, mockArgs);
 
     expect(warning).toHaveBeenCalledWith(
-      '⚠️ PR title: subject must not be longer than 20 characters'
+      '⚠️ Commitlint: subject must not be longer than 20 characters'
     );
     expect(info).toHaveBeenLastCalledWith(
       '✅ PR title validated with warnings'

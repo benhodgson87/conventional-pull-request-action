@@ -2,7 +2,7 @@ import { warning } from '@actions/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   warnMissingWorkspace,
-  warnPrTitle,
+  warnLinting,
   warnRulesNotFound
 } from './warnings';
 
@@ -43,7 +43,7 @@ describe('Warning outputs', () => {
   });
 
   it('`warnPrTitle` should pass the expected error to the output with given arguments', () => {
-    warnPrTitle(`Doesn't look right!`);
-    expect(warning).toHaveBeenCalledWith(`⚠️ PR title: Doesn't look right!`);
+    warnLinting(`Doesn't look right!`);
+    expect(warning).toHaveBeenCalledWith(`⚠️ Commitlint: Doesn't look right!`);
   });
 });

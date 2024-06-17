@@ -82,8 +82,8 @@ const lint = (githubToken, githubWorkspace, rulesPath, enforcedScopeTypes, scope
     const lintOutput = yield (0, lint_1.default)(pullRequest.title, commitlintRules.rules, {
         parserOpts
     });
-    lintOutput.warnings.forEach(warn => (0, warnings_1.warnPrTitle)(warn.message));
-    lintOutput.errors.forEach(err => (0, errors_1.errorPrTitle)(err.message));
+    lintOutput.warnings.forEach(warn => (0, warnings_1.warnLinting)(warn.message));
+    lintOutput.errors.forEach(err => (0, errors_1.errorLinting)(err.message));
     const hasWarnings = lintOutput.warnings.length > 0;
     if (!lintOutput.valid) {
         return (0, fails_1.setFailedDoesNotMatchSpec)();
@@ -164,10 +164,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.errorPrTitle = void 0;
+exports.errorLinting = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const errorPrTitle = (message) => core.error(`⛔️ PR title: ${message}`);
-exports.errorPrTitle = errorPrTitle;
+const errorLinting = (message) => core.error(`⛔️ Commitlint: ${message}`);
+exports.errorLinting = errorLinting;
 
 
 /***/ }),
@@ -294,14 +294,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.warnPrTitle = exports.warnRulesNotFound = exports.warnMissingWorkspace = void 0;
+exports.warnLinting = exports.warnRulesNotFound = exports.warnMissingWorkspace = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const warnMissingWorkspace = () => core.warning(`⚠️ Could not find Github Action Workspace. Falling back to default @commitlint/config-conventional lint rules.`);
 exports.warnMissingWorkspace = warnMissingWorkspace;
 const warnRulesNotFound = (path) => core.warning(`⚠️ Commitlint rules file not found, falling back to default @commitlint/config-conventional lint rules. Check that 'commitlintRulesPath${path ? `: ${path}` : ''}' matches the relative path and filename of a valid commitlint rules file, and you have included the actions/checkout step.`);
 exports.warnRulesNotFound = warnRulesNotFound;
-const warnPrTitle = (message) => core.warning(`⚠️ PR title: ${message}`);
-exports.warnPrTitle = warnPrTitle;
+const warnLinting = (message) => core.warning(`⚠️ Commitlint: ${message}`);
+exports.warnLinting = warnLinting;
 
 
 /***/ }),

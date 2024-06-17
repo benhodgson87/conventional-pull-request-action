@@ -23,11 +23,11 @@ import {
   MISSING_WORKSPACE
 } from './utils/rules';
 import {
+  warnLinting,
   warnMissingWorkspace,
-  warnPrTitle,
   warnRulesNotFound
 } from './outputs/warnings';
-import { errorPrTitle } from './outputs/errors';
+import { errorLinting } from './outputs/errors';
 
 const lint = async (
   githubToken?: string,
@@ -85,8 +85,8 @@ const lint = async (
       parserOpts
     }
   );
-  lintOutput.warnings.forEach(warn => warnPrTitle(warn.message));
-  lintOutput.errors.forEach(err => errorPrTitle(err.message));
+  lintOutput.warnings.forEach(warn => warnLinting(warn.message));
+  lintOutput.errors.forEach(err => errorLinting(err.message));
 
   const hasWarnings = lintOutput.warnings.length > 0;
 
