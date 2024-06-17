@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   logActionSuccessful,
   logLintableScopeFound,
+  logLintingPrTitle,
+  logLintingPrTitleWithCustomRules,
   logPrTitleFound,
   logScopeCheckSkipped
 } from './logs';
@@ -26,6 +28,18 @@ describe('Log outputs', () => {
     logPrTitleFound(`fix(CDV-2812): Get with friends`);
     expect(info).toHaveBeenCalledWith(
       `🕵️ Found PR title: "fix(CDV-2812): Get with friends"`
+    );
+  });
+
+  it('`logLintingPrTitle` should pass the expected log to the output', () => {
+    logLintingPrTitle();
+    expect(info).toHaveBeenCalledWith(`📋 Checking PR title with commitlint`);
+  });
+
+  it('`logLintingPrTitleWithCustomRules` should pass the expected log to the output', () => {
+    logLintingPrTitleWithCustomRules('./commitlint.rules.js');
+    expect(info).toHaveBeenCalledWith(
+      `📋 Found custom commitlint rules file at "./commitlint.rules.js". Checking PR title with commitlint`
     );
   });
 

@@ -5,6 +5,8 @@ import createPreset from 'conventional-changelog-conventionalcommits';
 import {
   logActionSuccessful,
   logLintableScopeFound,
+  logLintingPrTitle,
+  logLintingPrTitleWithCustomRules,
   logPrTitleFound,
   logScopeCheckSkipped
 } from './outputs/logs';
@@ -65,6 +67,12 @@ const lint = async (
   if (commitlintRules.error === MISSING_WORKSPACE) warnMissingWorkspace();
   if (commitlintRules.error === MISSING_RULES_FILE)
     warnRulesNotFound(rulesPath);
+
+  if (rulesPath && !commitlintRules.error) {
+    logLintingPrTitleWithCustomRules(rulesPath);
+  } else {
+    logLintingPrTitle();
+  }
 
   const {
     conventionalChangelog: { parserOpts }

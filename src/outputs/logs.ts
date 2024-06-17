@@ -4,6 +4,14 @@ import { Commit } from 'conventional-commits-parser';
 export const logPrTitleFound = (title: string) =>
   core.info(`🕵️ Found PR title: "${title}"`);
 
+export const logLintingPrTitle = () =>
+  core.info(`📋 Checking PR title with commitlint`);
+
+export const logLintingPrTitleWithCustomRules = (path: string) =>
+  core.info(
+    `📋 Found custom commitlint rules file at "${path}". Checking PR title with commitlint`
+  );
+
 export const logLintableScopeFound = (
   scope: Commit.Field | string,
   regex: string
