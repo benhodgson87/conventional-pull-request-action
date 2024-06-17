@@ -72,6 +72,12 @@ const lint = (githubToken, githubWorkspace, rulesPath, enforcedScopeTypes, scope
         (0, warnings_1.warnMissingWorkspace)();
     if (commitlintRules.error === rules_1.MISSING_RULES_FILE)
         (0, warnings_1.warnRulesNotFound)(rulesPath);
+    if (rulesPath && !commitlintRules.error) {
+        (0, logs_1.logLintingPrTitleWithCustomRules)(rulesPath);
+    }
+    else {
+        (0, logs_1.logLintingPrTitle)();
+    }
     const { conventionalChangelog: { parserOpts } } = yield (0, conventional_changelog_conventionalcommits_1.default)(null, null);
     const lintOutput = yield (0, lint_1.default)(pullRequest.title, commitlintRules.rules, {
         parserOpts
@@ -88,8 +94,11 @@ const lint = (githubToken, githubWorkspace, rulesPath, enforcedScopeTypes, scope
         if (enforcedScopeTypes && !scope) {
             return (0, fails_1.setFailedScopeRequired)(type);
         }
-        if (scope && scopeRegex && !scope.match(scopeRegex)) {
-            return (0, fails_1.setFailedScopeNotValid)(scopeRegex.toString());
+        if (scope && scopeRegex) {
+            (0, logs_1.logLintableScopeFound)(scope, scopeRegex.toString());
+            if (!scope.match(scopeRegex)) {
+                return (0, fails_1.setFailedScopeNotValid)(scopeRegex.toString());
+            }
         }
     }
     else {
@@ -238,13 +247,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.logScopeCheckSkipped = exports.logActionSuccessful = exports.logPrTitleFound = void 0;
+exports.logScopeCheckSkipped = exports.logActionSuccessful = exports.logLintableScopeFound = exports.logLintingPrTitleWithCustomRules = exports.logLintingPrTitle = exports.logPrTitleFound = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const logPrTitleFound = (title) => core.info(`🕵️  Found PR title: "${title}"`);
+const logPrTitleFound = (title) => core.info(`🕵️ Found PR title: "${title}"`);
 exports.logPrTitleFound = logPrTitleFound;
+const logLintingPrTitle = () => core.info(`📋 Checking PR title with commitlint`);
+exports.logLintingPrTitle = logLintingPrTitle;
+const logLintingPrTitleWithCustomRules = (path) => core.info(`📋 Found custom commitlint rules file at "${path}". Checking PR title with commitlint`);
+exports.logLintingPrTitleWithCustomRules = logLintingPrTitleWithCustomRules;
+const logLintableScopeFound = (scope, regex) => core.info(`👀 Found scope "${scope}". Linting with "${regex}"`);
+exports.logLintableScopeFound = logLintableScopeFound;
 const logActionSuccessful = (hasWarnings = false) => core.info(`✅ PR title validated ${hasWarnings ? 'with warnings' : 'successfully'}`);
 exports.logActionSuccessful = logActionSuccessful;
-const logScopeCheckSkipped = (type) => core.info(`⏩ Skipping scope check for type '${type}'`);
+const logScopeCheckSkipped = (type) => core.info(`⏩ Skipping scope check for type "${type}"`);
 exports.logScopeCheckSkipped = logScopeCheckSkipped;
 
 
@@ -281,11 +296,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.warnPrTitle = exports.warnRulesNotFound = exports.warnMissingWorkspace = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const warnMissingWorkspace = () => core.warning(`⚠️  Could not find Github Action Workspace. Falling back to default @commitlint/config-conventional lint rules.`);
+const warnMissingWorkspace = () => core.warning(`⚠️ Could not find Github Action Workspace. Falling back to default @commitlint/config-conventional lint rules.`);
 exports.warnMissingWorkspace = warnMissingWorkspace;
-const warnRulesNotFound = (path) => core.warning(`⚠️  Commitlint rules file not found, falling back to default @commitlint/config-conventional lint rules. Check that 'commitlintRulesPath${path ? `: ${path}` : ''}' matches the relative path and filename of a valid commitlint rules file, and you have included the actions/checkout step.`);
+const warnRulesNotFound = (path) => core.warning(`⚠️ Commitlint rules file not found, falling back to default @commitlint/config-conventional lint rules. Check that 'commitlintRulesPath${path ? `: ${path}` : ''}' matches the relative path and filename of a valid commitlint rules file, and you have included the actions/checkout step.`);
 exports.warnRulesNotFound = warnRulesNotFound;
-const warnPrTitle = (message) => core.warning(`⚠️  PR title: ${message}`);
+const warnPrTitle = (message) => core.warning(`⚠️ PR title: ${message}`);
 exports.warnPrTitle = warnPrTitle;
 
 
