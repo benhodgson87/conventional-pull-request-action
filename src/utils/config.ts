@@ -7,7 +7,7 @@ export const getActionConfig = () => {
       const types = process.env.INPUT_ENFORCEDSCOPETYPES.split('|');
       enforcedScopeTypes = types.length > 0 ? types : undefined;
     } catch (e) {
-      console.error('Failed to convert scopeRegex to valid RegExp', e);
+      throw new Error(`Failed parsing enforcedScopeTypes\n\n${JSON.stringify(e)}`)
     }
   }
 
@@ -16,7 +16,7 @@ export const getActionConfig = () => {
       const regex = new RegExp(process.env.INPUT_SCOPEREGEX, 'g');
       scopeRegex = regex ? regex : undefined;
     } catch (e) {
-      console.error('Failed to convert scopeRegex to valid RegExp', e);
+      throw new Error(`Failed to convert scopeRegex to valid RegExp\n\n${JSON.stringify(e)}`);
     }
   }
 

@@ -13,5 +13,5 @@ try {
 
   lint(githubToken, githubWorkspace, rulesPath, enforcedScopeTypes, scopeRegex);
 } catch (e) {
-  core.setFailed(`Failed to run action with error: ${JSON.stringify(e)}`);
+  core.setFailed(`Failed to run action with error: ${e}`);
 }
