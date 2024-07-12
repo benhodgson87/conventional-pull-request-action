@@ -2,7 +2,7 @@
 
 A Github Action that enforces the [conventional commit spec](https://www.conventionalcommits.org/en/v1.0.0/#specification) on pull request titles, whilst allowing for linting of scopes to be applied, for example to enforce the use of ticket numbers from issue trackers and project management tools. Although the spec generally directs against doing this, it can be valuable in generating rich release notes for projects/organisations who do not find value in noun-based scopes.
 
-Forked from, and heavily based on, Conde Nast's [conventional-pull-request-action](https://github.com/CondeNast/conventional-pull-request-action).
+Originally forked from, and inspired by, Conde Nast's [conventional-pull-request-action](https://github.com/CondeNast/conventional-pull-request-action).
 
 ## Example
 
