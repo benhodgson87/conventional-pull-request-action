@@ -37,11 +37,12 @@ jobs:
 
 ## Arguments
 
-| Argument              | Required | Example                   | Purpose                                                                                                                                   |
-| --------------------- | -------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `commitlintRulesPath` | No       | `'./commitlint.rules.js'` | A relative path from the repo root to a file containing custom Commitlint rules to override the default ([docs](#customising-lint-rules)) |
-| `scopeRegex`          | No       | `'[A-Z]+-[0-9]+'`         | A JS regex (without slashes or flags) used to lint the PR scope ([docs](#linting-scope))                                                  |
-| `enforcedScopeTypes`  | No       | `'feat\|fix'`             | A list of PR types where the scope is always required and linted ([docs](#skipping-scope-linting))                                        |
+| Argument              | Required | Example                                  | Purpose                                                                                                                                   |
+| --------------------- | -------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `prTitle`             | No       | `${{ github.event.pull_request.title }}` | The title of the pull request if not using a Github token ([docs](#arguments-vs-api-for-pr-title))                                        |
+| `commitlintRulesPath` | No       | `'./commitlint.rules.js'`                | A relative path from the repo root to a file containing custom Commitlint rules to override the default ([docs](#customising-lint-rules)) |
+| `scopeRegex`          | No       | `'[A-Z]+-[0-9]+'`                        | A JS regex (without slashes or flags) used to lint the PR scope ([docs](#linting-scope))                                                  |
+| `enforcedScopeTypes`  | No       | `'feat\|fix'`                            | A list of PR types where the scope is always required and linted ([docs](#skipping-scope-linting))                                        |
 
 ## Usage
 
@@ -54,6 +55,17 @@ If you do not use this setting in your repo, Github will by default use the titl
 You can find the option in the root General settings of your Github repo.
 
 > Pull Requests > Allow Squash Merging > Default Commit Message > Pull Request Title
+
+### Arguments vs. API for PR title
+
+The action allows you to provide the PR title in two ways. You can either include `GITHUB_TOKEN` as an environment variable, which will use the Github API to retrieve the title of the PR, or you can manually pass the title of the pull request as an argument.
+
+```yaml
+with:
+  prTitle: ${{ github.event.pull_request.title }}
+```
+
+If a `prTitle` arg is provided, the API request will be skipped. This can be useful to avoid API rate limiting with shared Github access tokens.
 
 ### Customising lint rules
 
