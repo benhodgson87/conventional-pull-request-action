@@ -23,6 +23,7 @@ export const getActionConfig = () => {
   return {
     githubToken: process.env.GITHUB_TOKEN,
     githubWorkspace: process.env.GITHUB_WORKSPACE,
+    prTitle: process.env.INPUT_PR_TITLE,
     rulesPath: process.env.INPUT_COMMITLINTRULESPATH,
     ...(enforcedScopeTypes ? { enforcedScopeTypes } : {}),
     ...(scopeRegex ? { scopeRegex } : {})

@@ -8,6 +8,7 @@ describe('Config utils', () => {
     process.env.INPUT_COMMITLINTRULESPATH = './commitlint.rules.js';
     process.env.GITHUB_TOKEN = 'asdf';
     process.env.GITHUB_WORKSPACE = './';
+    process.env.INPUT_PR_TITLE = 'chore(TEST-1234): Manually pass a PR title'
   });
 
   it('`getActionConfig` returns a valid config object with required values', () => {
@@ -15,7 +16,8 @@ describe('Config utils', () => {
     expect(config).toMatchObject({
       rulesPath: expect.any(String),
       githubToken: expect.any(String),
-      githubWorkspace: expect.any(String)
+      githubWorkspace: expect.any(String),
+      prTitle: expect.any(String)
     });
   });
 
@@ -27,7 +29,8 @@ describe('Config utils', () => {
       enforcedScopeTypes: expect.any(Array),
       rulesPath: expect.any(String),
       githubToken: expect.any(String),
-      githubWorkspace: expect.any(String)
+      githubWorkspace: expect.any(String),
+      prTitle: expect.any(String)
     });
     expect(config.enforcedScopeTypes).toEqual(['feat', 'fix']);
   });
@@ -40,7 +43,20 @@ describe('Config utils', () => {
       scopeRegex: expect.any(RegExp),
       rulesPath: expect.any(String),
       githubToken: expect.any(String),
-      githubWorkspace: expect.any(String)
+      githubWorkspace: expect.any(String),
+      prTitle: expect.any(String)
+    });
+  });
+
+  it('`getActionConfig` returns a valid config object with `undefined` PR title if not provided', () => {
+    delete process.env.INPUT_PR_TITLE;
+
+    const config = getActionConfig();
+    expect(config).toMatchObject({
+      rulesPath: expect.any(String),
+      githubToken: expect.any(String),
+      githubWorkspace: expect.any(String),
+      prTitle: undefined
     });
   });
 });
