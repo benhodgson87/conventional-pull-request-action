@@ -39,7 +39,7 @@ jobs:
 
 | Argument              | Required | Example                                  | Purpose                                                                                                                                   |
 | --------------------- | -------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `prTitle`             | No       | `${{ github.event.pull_request.title }}` | The title of the pull request if not using a Github token ([docs](#arguments-vs-api-for-pr-title))                                        |
+| `prTitle`             | No       | `${{ github.event.pull_request.title }}` | The title of the pull request if not using a Github token ([docs](#providing-a-pr-title))                                                 |
 | `commitlintRulesPath` | No       | `'./commitlint.rules.js'`                | A relative path from the repo root to a file containing custom Commitlint rules to override the default ([docs](#customising-lint-rules)) |
 | `scopeRegex`          | No       | `'[A-Z]+-[0-9]+'`                        | A JS regex (without slashes or flags) used to lint the PR scope ([docs](#linting-scope))                                                  |
 | `enforcedScopeTypes`  | No       | `'feat\|fix'`                            | A list of PR types where the scope is always required and linted ([docs](#skipping-scope-linting))                                        |
@@ -56,7 +56,7 @@ You can find the option in the root General settings of your Github repo.
 
 > Pull Requests > Allow Squash Merging > Default Commit Message > Pull Request Title
 
-### Arguments vs. API for PR title
+### Providing a PR title
 
 The action allows you to provide the PR title in two ways. You can either include `GITHUB_TOKEN` as an environment variable, which will use the Github API to retrieve the title of the PR, or you can manually pass the title of the pull request as an argument.
 
