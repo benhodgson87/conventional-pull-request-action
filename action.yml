@@ -8,6 +8,9 @@ runs:
   using: 'node20'
   main: 'dist/index.js'
 inputs:
+  prTitle:
+    description: 'Manually provide a PR title as an arg to skip making an API request, using ${{ github.event.pull_request.title }}'
+    required: false
   commitlintRulesPath:
     description: 'Relative path to commitlint rules file'
     required: false
