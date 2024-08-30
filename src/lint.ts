@@ -38,15 +38,15 @@ const lint = async (
   enforcedScopeTypes?: Array<string>,
   scopeRegex?: RegExp
 ) => {
-  if (!githubToken) {
-    return setFailedMissingToken();
-  }
-
   let pullRequestTitle = prTitle;
 
   if (pullRequestTitle) {
     logPrTitleFoundArg(pullRequestTitle);
   } else {
+    if (!githubToken) {
+      return setFailedMissingToken();
+    }
+
     const octokit = github.getOctokit(githubToken);
 
     if (!github.context.payload.pull_request) {
