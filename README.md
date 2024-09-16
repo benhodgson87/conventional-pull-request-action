@@ -96,7 +96,7 @@ By default, scope linting will only occur when a PR title contains a scope. If y
 
 Lint for any Jira ticket format, eg `FOO-123`, `BAR-234`, `BAZ-345`
 
-```ts
+```yaml
 scopeRegex: '^[A-Z]+-[0-9]+$'
 ```
 
@@ -104,7 +104,7 @@ scopeRegex: '^[A-Z]+-[0-9]+$'
 
 Only allow tickets from three specific projects; `SPECIFIC-123`, `JIRA-234`, `PROJECT-345`. `FOO-456` would be rejected.
 
-```ts
+```yaml
 scopeRegex: '^((SPECIFIC|JIRA|PROJECT)-[0-9]+)$'
 ```
 
