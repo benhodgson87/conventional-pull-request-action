@@ -1,4 +1,5 @@
 import { setFailed, warning, error, info } from '@actions/core';
+import { getOctokit } from '@actions/github';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lint } from './lint';
 
@@ -49,7 +50,12 @@ vi.mock('@actions/github', async importOriginal => {
   };
 });
 
-const mockArgs = ['TOKEN', './', './src/fixtures/commitlint.rules.js'];
+const mockArgs = [
+  'TOKEN',
+  './',
+  undefined,
+  './src/fixtures/commitlint.rules.js'
+];
 
 describe('Linter', () => {
   beforeEach(() => {
@@ -57,14 +63,33 @@ describe('Linter', () => {
     vi.restoreAllMocks();
   });
 
-  it('should find and log the PR title', async () => {
+  it('should skip the API request if PR title provided as an arg and log the PR title', async () => {
+    mocks.getOctokit.mockImplementation(vi.fn());
+
+    const mockArgsWithManualTitle = [
+      ...mockArgs.filter(arg => arg).slice(0, 2),
+      'chore(FOO-1234): hello i am a valid title passed manually',
+      ...mockArgs
+        .filter(arg => arg)
+        .slice(2, mockArgs.filter(arg => arg).length)
+    ];
+
+    await lint.apply(null, mockArgsWithManualTitle);
+
+    expect(getOctokit).not.toHaveBeenCalled();
+    expect(info).toHaveBeenCalledWith(
+      '🕵️ Found PR title in action args: "chore(FOO-1234): hello i am a valid title passed manually"'
+    );
+  });
+
+  it('should retrieve the pull request from the API if not passed as an arg and log the PR title', async () => {
     mocks.getOctokit.mockReturnValue({
       rest: {
         pulls: {
           get: vi.fn().mockReturnValue({
             data: {
               commits: 1,
-              title: 'feat(BAR-1234): hello i am a valid title'
+              title: 'feat(BAR-1234): hello i am a valid title from the API'
             }
           })
         }
@@ -73,8 +98,9 @@ describe('Linter', () => {
 
     await lint.apply(null, mockArgs);
 
+    expect(getOctokit).toHaveBeenCalledWith(mockArgs[0]);
     expect(info).toHaveBeenCalledWith(
-      '🕵️ Found PR title: "feat(BAR-1234): hello i am a valid title"'
+      '🕵️ Found PR title from Github API: "feat(BAR-1234): hello i am a valid title from the API"'
     );
   });
 
@@ -129,7 +155,7 @@ describe('Linter', () => {
 
     await lint.apply(
       null,
-      mockArgs.filter(arg => arg !== mockArgs[1])
+      mockArgs.filter(arg => arg && !arg.includes('commitlint.rules.js'))
     );
 
     expect(info).toHaveBeenCalledWith('📋 Checking PR title with commitlint');

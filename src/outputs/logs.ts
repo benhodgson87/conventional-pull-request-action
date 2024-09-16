@@ -1,8 +1,11 @@
 import * as core from '@actions/core';
 import { Commit } from 'conventional-commits-parser';
 
-export const logPrTitleFound = (title: string) =>
-  core.info(`🕵️ Found PR title: "${title}"`);
+export const logPrTitleFoundArg = (title: string) =>
+  core.info(`🕵️ Found PR title in action args: "${title}"`);
+
+export const logPrTitleFoundApi = (title: string) =>
+  core.info(`🕵️ Found PR title from Github API: "${title}"`);
 
 export const logLintingPrTitle = () =>
   core.info(`📋 Checking PR title with commitlint`);
