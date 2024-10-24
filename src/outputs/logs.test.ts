@@ -5,7 +5,8 @@ import {
   logLintableScopeFound,
   logLintingPrTitle,
   logLintingPrTitleWithCustomRules,
-  logPrTitleFound,
+  logPrTitleFoundArg,
+  logPrTitleFoundApi,
   logScopeCheckSkipped
 } from './logs';
 
@@ -24,10 +25,17 @@ describe('Log outputs', () => {
     vi.resetAllMocks();
   });
 
-  it('`logPrTitleFound` should pass the expected log to the output', () => {
-    logPrTitleFound(`fix(CDV-2812): Get with friends`);
+  it('`logPrTitleFoundArg` should pass the expected log to the output', () => {
+    logPrTitleFoundArg(`fix(CDV-2812): Get with friends`);
     expect(info).toHaveBeenCalledWith(
-      `🕵️ Found PR title: "fix(CDV-2812): Get with friends"`
+      `🕵️ Found PR title in action args: "fix(CDV-2812): Get with friends"`
+    );
+  });
+
+  it('`logPrTitleFoundApi` should pass the expected log to the output', () => {
+    logPrTitleFoundApi(`fix(CDV-2812): Get with friends`);
+    expect(info).toHaveBeenCalledWith(
+      `🕵️ Found PR title from Github API: "fix(CDV-2812): Get with friends"`
     );
   });
 

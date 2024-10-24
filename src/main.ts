@@ -6,12 +6,13 @@ try {
   const {
     githubToken,
     githubWorkspace,
+    prTitle,
     rulesPath,
     enforcedScopeTypes,
-    scopeRegex
+    scopeRegex,
   } = getActionConfig();
 
-  lint(githubToken, githubWorkspace, rulesPath, enforcedScopeTypes, scopeRegex);
+  lint(githubToken, githubWorkspace, prTitle, rulesPath, enforcedScopeTypes, scopeRegex);
 } catch (e) {
   core.setFailed(`Failed to run action with error: ${e}`);
 }

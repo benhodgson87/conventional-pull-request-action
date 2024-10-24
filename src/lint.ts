@@ -7,7 +7,8 @@ import {
   logLintableScopeFound,
   logLintingPrTitle,
   logLintingPrTitleWithCustomRules,
-  logPrTitleFound,
+  logPrTitleFoundArg,
+  logPrTitleFoundApi,
   logScopeCheckSkipped
 } from './outputs/logs';
 import {
@@ -32,35 +33,44 @@ import { errorLinting } from './outputs/errors';
 const lint = async (
   githubToken?: string,
   githubWorkspace?: string,
+  prTitle?: string,
   rulesPath?: string,
   enforcedScopeTypes?: Array<string>,
   scopeRegex?: RegExp
 ) => {
-  if (!githubToken) {
-    return setFailedMissingToken();
-  }
+  let pullRequestTitle = prTitle;
 
-  const octokit = github.getOctokit(githubToken);
-
-  if (!github.context.payload.pull_request) {
-    return setFailedPrNotFound();
-  }
-
-  const {
-    number: pullNumber,
-    base: {
-      user: { login: owner },
-      repo: { name: repo }
+  if (pullRequestTitle) {
+    logPrTitleFoundArg(pullRequestTitle);
+  } else {
+    if (!githubToken) {
+      return setFailedMissingToken();
     }
-  } = github.context.payload.pull_request;
 
-  const { data: pullRequest } = await octokit.rest.pulls.get({
-    owner,
-    repo,
-    pull_number: pullNumber
-  });
+    const octokit = github.getOctokit(githubToken);
 
-  logPrTitleFound(pullRequest.title);
+    if (!github.context.payload.pull_request) {
+      return setFailedPrNotFound();
+    }
+
+    const {
+      number: pullNumber,
+      base: {
+        user: { login: owner },
+        repo: { name: repo }
+      }
+    } = github.context.payload.pull_request;
+
+    const { data: pullRequest } = await octokit.rest.pulls.get({
+      owner,
+      repo,
+      pull_number: pullNumber
+    });
+
+    pullRequestTitle = pullRequest.title;
+
+    logPrTitleFoundApi(pullRequestTitle);
+  }
 
   const commitlintRules = await getLintRules(rulesPath, githubWorkspace);
 
@@ -78,13 +88,9 @@ const lint = async (
     conventionalChangelog: { parserOpts }
   } = await createPreset(null, null);
 
-  const lintOutput = await commitlint(
-    pullRequest.title,
-    commitlintRules.rules,
-    {
-      parserOpts
-    }
-  );
+  const lintOutput = await commitlint(pullRequestTitle, commitlintRules.rules, {
+    parserOpts
+  });
   lintOutput.warnings.forEach(warn => warnLinting(warn.message));
   lintOutput.errors.forEach(err => errorLinting(err.message));
 
@@ -94,7 +100,7 @@ const lint = async (
     return setFailedDoesNotMatchSpec();
   }
 
-  const { scope, type } = conventionalCommitsParser.sync(pullRequest.title);
+  const { scope, type } = conventionalCommitsParser.sync(pullRequestTitle);
 
   if (
     !enforcedScopeTypes ||
