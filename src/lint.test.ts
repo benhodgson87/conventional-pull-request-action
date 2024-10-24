@@ -81,7 +81,8 @@ describe('Linter', () => {
   it.each([
     'fix: Subject is valid',
     'feat(BAR-1234): Subject is valid',
-    'feat!: Subject is valid'
+    'feat!: Subject is valid',
+    'feat(BAR-2345)!: Subject is valid'
   ])(
     'should output a success message if PR title is valid: %s',
     async title => {
