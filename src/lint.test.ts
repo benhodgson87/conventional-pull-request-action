@@ -323,6 +323,59 @@ describe('Linter', () => {
     expect(setFailed).not.toHaveBeenCalled();
   });
 
+  it('should pass if a slashed scope is listed verbatim in scope-enum', async () => {
+    mocks.getOctokit.mockReturnValue({
+      rest: {
+        pulls: {
+          get: vi.fn().mockReturnValue({
+            data: {
+              commits: 1,
+              title: 'feat(feat/auth): subject is valid'
+            }
+          })
+        }
+      }
+    });
+
+    await lint.apply(null, [
+      'TOKEN',
+      './',
+      './src/fixtures/commitlint.scope-enum.rules.js'
+    ]);
+
+    expect(info).toHaveBeenLastCalledWith('✅ PR title validated successfully');
+    expect(error).not.toHaveBeenCalled();
+    expect(setFailed).not.toHaveBeenCalled();
+  });
+
+  it('should fail if a slashed scope is not listed in scope-enum', async () => {
+    mocks.getOctokit.mockReturnValue({
+      rest: {
+        pulls: {
+          get: vi.fn().mockReturnValue({
+            data: {
+              commits: 1,
+              title: 'feat(feat/unknown): subject is valid'
+            }
+          })
+        }
+      }
+    });
+
+    await lint.apply(null, [
+      'TOKEN',
+      './',
+      './src/fixtures/commitlint.scope-enum.rules.js'
+    ]);
+
+    expect(error).toHaveBeenCalledWith(
+      '⛔️ Commitlint: scope must be one of [feat/auth, core/logger, utils]'
+    );
+    expect(setFailed).toHaveBeenCalledWith(
+      '🛑 Pull request title does not conform to the conventional commit spec'
+    );
+  });
+
   it('should fail if the title is a valid conventional commit but scope is missing for a required type', async () => {
     mocks.getOctokit.mockReturnValue({
       rest: {
