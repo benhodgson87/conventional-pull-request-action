@@ -52,16 +52,20 @@ Action inputs are defined in `action.yml`. When adding or changing one:
 2. Read it from the environment in `src/utils/config.ts` (inputs are available as `INPUT_<UPPERCASED_NAME>`)
 3. Validate or parse the value in `config.ts` — return `undefined` if the env var is not set, throw a descriptive `Error` if it is set but invalid (see how `scopeRegex` handles a bad regex)
 4. Update the README table with usage documentation
-5. Rebuild `dist/` (see below)
 
 ## Building
 
-`dist/` must be committed and kept in sync with `src/`. After changing source, rebuild and commit dist manually:
+`dist/` is gitignored and built automatically — do not commit it manually. The flow is:
+
+1. Merge a feature PR to `main`
+2. Release Please opens a release PR (titled `chore: release vX.Y.Z`)
+3. The `build-dist.yml` workflow detects the release PR and commits a fresh `dist/` build to it
+4. Merging the release PR cuts a new GitHub release and tags `vX`, `vX.Y`, and `vX.Y.Z`
+
+To build locally for inspection:
 
 ```bash
 npm run build
-git add dist/
-git commit -m "chore: build dist"
 ```
 
 ## Pull requests
