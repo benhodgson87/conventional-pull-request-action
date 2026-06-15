@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { error } from '@actions/core';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { errorLinting } from './errors';
 
-vi.mock('@actions/core', async importOriginal => {
+vi.mock('@actions/core', async (importOriginal) => {
   const mod = await importOriginal<typeof import('@actions/core')>();
   const error = vi.fn();
   return {

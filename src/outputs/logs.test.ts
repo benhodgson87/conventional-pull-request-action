@@ -9,7 +9,7 @@ import {
   logScopeCheckSkipped
 } from './logs';
 
-vi.mock('@actions/core', async importOriginal => {
+vi.mock('@actions/core', async (importOriginal) => {
   const mod = await importOriginal<typeof import('@actions/core')>();
   const info = vi.fn();
   return {

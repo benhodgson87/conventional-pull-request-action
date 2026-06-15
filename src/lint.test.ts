@@ -1,4 +1,4 @@
-import { setFailed, warning, error, info } from '@actions/core';
+import { error, info, setFailed, warning } from '@actions/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lint } from './lint';
 
@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@actions/core', async importOriginal => {
+vi.mock('@actions/core', async (importOriginal) => {
   const mod = await importOriginal<typeof import('@actions/core')>();
   const error = vi.fn();
   const info = vi.fn();
@@ -25,7 +25,7 @@ vi.mock('@actions/core', async importOriginal => {
   };
 });
 
-vi.mock('@actions/github', async importOriginal => {
+vi.mock('@actions/github', async (importOriginal) => {
   const mod = await importOriginal<typeof import('@actions/github')>();
 
   const context = {
@@ -83,36 +83,31 @@ describe('Linter', () => {
     'feat(BAR-1234): Subject is valid',
     'feat!: Subject is valid',
     'feat(BAR-2345)!: Subject is valid'
-  ])(
-    'should output a success message if PR title is valid: %s',
-    async title => {
-      mocks.getOctokit.mockReturnValue({
-        rest: {
-          pulls: {
-            get: vi.fn().mockReturnValue({
-              data: {
-                commits: 1,
-                title
-              }
-            })
-          }
+  ])('should output a success message if PR title is valid: %s', async (title) => {
+    mocks.getOctokit.mockReturnValue({
+      rest: {
+        pulls: {
+          get: vi.fn().mockReturnValue({
+            data: {
+              commits: 1,
+              title
+            }
+          })
         }
-      });
+      }
+    });
 
-      await lint.apply(null, mockArgs);
+    await lint.apply(null, mockArgs);
 
-      expect(info).toHaveBeenCalledWith(
-        '📋 Found custom commitlint rules file at "./src/fixtures/commitlint.rules.js". Checking PR title with commitlint'
-      );
-      expect(info).toHaveBeenLastCalledWith(
-        '✅ PR title validated successfully'
-      );
+    expect(info).toHaveBeenCalledWith(
+      '📋 Found custom commitlint rules file at "./src/fixtures/commitlint.rules.js". Checking PR title with commitlint'
+    );
+    expect(info).toHaveBeenLastCalledWith('✅ PR title validated successfully');
 
-      expect(error).not.toHaveBeenCalled();
-      expect(warning).not.toHaveBeenCalled();
-      expect(setFailed).not.toHaveBeenCalled();
-    }
-  );
+    expect(error).not.toHaveBeenCalled();
+    expect(warning).not.toHaveBeenCalled();
+    expect(setFailed).not.toHaveBeenCalled();
+  });
 
   it('should output a success message if PR title is valid and no custom rules are provided', async () => {
     mocks.getOctokit.mockReturnValue({
@@ -130,7 +125,7 @@ describe('Linter', () => {
 
     await lint.apply(
       null,
-      mockArgs.filter(arg => arg !== mockArgs[1])
+      mockArgs.filter((arg) => arg !== mockArgs[1])
     );
 
     expect(info).toHaveBeenCalledWith('📋 Checking PR title with commitlint');
@@ -231,7 +226,7 @@ describe('Linter', () => {
     await lint.apply(null, [
       ...mockArgs,
       undefined,
-      new RegExp(`\\b(FOO|BAR|BAZ)\\b-[0-9]+`, 'g')
+      /\b(FOO|BAR|BAZ)\b-[0-9]+/g
     ]);
 
     expect(setFailed).toHaveBeenCalledWith(
@@ -257,11 +252,11 @@ describe('Linter', () => {
     await lint.apply(null, [
       ...mockArgs,
       undefined,
-      new RegExp(`\\b(FOO|BAR|BAZ)\\b-[0-9]+`, 'g')
+      /\b(FOO|BAR|BAZ)\b-[0-9]+/g
     ]);
 
     expect(info).toHaveBeenCalledWith(
-      `👀 Found scope "FOO-123". Linting with "/\\b(FOO|BAR|BAZ)\\b-[0-9]+/g\"`
+      `👀 Found scope "FOO-123". Linting with "/\\b(FOO|BAR|BAZ)\\b-[0-9]+/g"`
     );
     expect(setFailed).not.toHaveBeenCalled();
   });
@@ -284,11 +279,11 @@ describe('Linter', () => {
     await lint.apply(null, [
       ...mockArgs,
       ['feat', 'fix'],
-      new RegExp(`\\b(FOO|BAR|BAZ)\\b-[0-9]+`, 'g')
+      /\b(FOO|BAR|BAZ)\b-[0-9]+/g
     ]);
 
     expect(info).toHaveBeenCalledWith(
-      `👀 Found scope "FOO-123". Linting with "/\\b(FOO|BAR|BAZ)\\b-[0-9]+/g\"`
+      `👀 Found scope "FOO-123". Linting with "/\\b(FOO|BAR|BAZ)\\b-[0-9]+/g"`
     );
     expect(info).toHaveBeenLastCalledWith(
       '✅ PR title validated with warnings'
@@ -313,7 +308,7 @@ describe('Linter', () => {
     await lint.apply(null, [
       ...mockArgs,
       ['feat', 'fix'],
-      new RegExp(`\\b(FOO|BAR|BAZ)\\b-[0-9]+`, 'g')
+      /\b(FOO|BAR|BAZ)\b-[0-9]+/g
     ]);
 
     expect(info).toHaveBeenCalledWith(
@@ -340,7 +335,7 @@ describe('Linter', () => {
     await lint.apply(null, [
       ...mockArgs,
       ['feat', 'fix', 'chore'],
-      new RegExp(`\\b(FOO|BAR|BAZ)\\b-[0-9]+`, 'g')
+      /\b(FOO|BAR|BAZ)\b-[0-9]+/g
     ]);
 
     expect(setFailed).toHaveBeenCalledWith(

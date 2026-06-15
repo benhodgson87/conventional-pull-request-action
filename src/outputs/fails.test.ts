@@ -1,14 +1,14 @@
 import { setFailed } from '@actions/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  setFailedPrNotFound,
-  setFailedMissingToken,
   setFailedDoesNotMatchSpec,
+  setFailedMissingToken,
+  setFailedPrNotFound,
   setFailedScopeNotValid,
   setFailedScopeRequired
 } from './fails';
 
-vi.mock('@actions/core', async importOriginal => {
+vi.mock('@actions/core', async (importOriginal) => {
   const mod = await importOriginal<typeof import('@actions/core')>();
   const setFailed = vi.fn();
   return {

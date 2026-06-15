@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import { Commit } from 'conventional-commits-parser';
+import type { Commit } from 'conventional-commits-parser';
 
 export const logPrTitleFound = (title: string) =>
   core.info(`🕵️ Found PR title: "${title}"`);
