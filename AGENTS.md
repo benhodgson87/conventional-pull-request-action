@@ -33,8 +33,9 @@ npm ci  # install dependencies
 
 ```bash
 npm test             # run tests (vitest)
-npm run format:check # check formatting (Prettier)
-npm run format:fix   # fix formatting
+npm run typecheck    # typecheck without emitting
+npm run check        # format + lint (biome, auto-fix)
+npm run check:ci     # format + lint (biome, no fix — used in CI)
 npm run build        # compile src → lib, then bundle lib → dist
 ```
 
@@ -42,7 +43,7 @@ TypeScript is compiled with `strict: true` and `noImplicitAny: true` — all typ
 
 Tests live alongside source as `*.test.ts` files and are excluded from TypeScript compilation. Vitest is used as the test runner.
 
-Prettier config is in `.prettierrc.json` — read it before writing code. Run `format:fix` before committing.
+Biome handles formatting and linting. Config is in `biome.json` — read it before writing code. Run `npm run check` before committing.
 
 ## Adding or changing inputs
 

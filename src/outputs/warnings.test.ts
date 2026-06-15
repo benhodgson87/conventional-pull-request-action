@@ -1,12 +1,12 @@
 import { warning } from '@actions/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  warnMissingWorkspace,
   warnLinting,
+  warnMissingWorkspace,
   warnRulesNotFound
 } from './warnings';
 
-vi.mock('@actions/core', async importOriginal => {
+vi.mock('@actions/core', async (importOriginal) => {
   const mod = await importOriginal<typeof import('@actions/core')>();
   const warning = vi.fn();
   return {

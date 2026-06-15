@@ -1,7 +1,15 @@
 import * as github from '@actions/github';
 import commitlint from '@commitlint/lint';
-import conventionalCommitsParser from 'conventional-commits-parser';
 import createPreset from 'conventional-changelog-conventionalcommits';
+import conventionalCommitsParser from 'conventional-commits-parser';
+import { errorLinting } from './outputs/errors';
+import {
+  setFailedDoesNotMatchSpec,
+  setFailedMissingToken,
+  setFailedPrNotFound,
+  setFailedScopeNotValid,
+  setFailedScopeRequired
+} from './outputs/fails';
 import {
   logActionSuccessful,
   logLintableScopeFound,
@@ -11,23 +19,15 @@ import {
   logScopeCheckSkipped
 } from './outputs/logs';
 import {
-  setFailedDoesNotMatchSpec,
-  setFailedMissingToken,
-  setFailedPrNotFound,
-  setFailedScopeNotValid,
-  setFailedScopeRequired
-} from './outputs/fails';
+  warnLinting,
+  warnMissingWorkspace,
+  warnRulesNotFound
+} from './outputs/warnings';
 import {
   getLintRules,
   MISSING_RULES_FILE,
   MISSING_WORKSPACE
 } from './utils/rules';
-import {
-  warnLinting,
-  warnMissingWorkspace,
-  warnRulesNotFound
-} from './outputs/warnings';
-import { errorLinting } from './outputs/errors';
 
 const lint = async (
   githubToken?: string,
@@ -85,8 +85,12 @@ const lint = async (
       parserOpts
     }
   );
-  lintOutput.warnings.forEach(warn => warnLinting(warn.message));
-  lintOutput.errors.forEach(err => errorLinting(err.message));
+  lintOutput.warnings.forEach((warn) => {
+    warnLinting(warn.message);
+  });
+  lintOutput.errors.forEach((err) => {
+    errorLinting(err.message);
+  });
 
   const hasWarnings = lintOutput.warnings.length > 0;
 
