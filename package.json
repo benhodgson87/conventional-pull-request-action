@@ -1,6 +1,6 @@
 {
   "name": "conventional-pull-request-action",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "An action to lint pull request titles to the conventional commit spec with jira tickets in the scope",
   "author": "Ben Hodgson <work@benhodgson.net>",
   "license": "MIT",
