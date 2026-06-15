@@ -1,6 +1,10 @@
-# Agent Guide
+# Agent Guidance
 
-A GitHub Action that lints pull request titles against the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) spec, with optional scope validation via regex.
+This repo implements `benhodgson87/conventional-pull-request-action` — a GitHub Action that:
+
+- Lints PR titles against the Conventional Commits spec using `@commitlint/config-conventional` rules (customisable via a rules file)
+- Optionally validates the PR scope against a regex (e.g. to enforce Jira ticket IDs)
+- Optionally restricts scope enforcement to specific commit types (e.g. only `feat` and `fix` must include a valid scope)
 
 ## Source structure
 
