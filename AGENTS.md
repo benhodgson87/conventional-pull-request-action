@@ -73,4 +73,4 @@ npm run build
 
 This repo uses conventional commits. PR titles are linted by the action itself (see `.github/workflows/lint-pr-title.yml`), using the root-level `commitlint.rules.js` for custom rules.
 
-The lint workflow run in CI pins to the published release (`@v2`), not the local source. Changes to `src/` will not be reflected in that check until a new release is cut.
+The lint workflow runs against `@main`, so it always uses the latest code on the main branch.
